@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Memory = void 0;
-var Memory;
+export var Memory;
 (function (Memory) {
     let Time;
     (function (Time) {
@@ -28,26 +25,77 @@ var Memory;
         Location[Location["Right"] = 5] = "Right";
         Location[Location["Left"] = 6] = "Left";
     })(Location = Memory.Location || (Memory.Location = {}));
-    function Position(time, position, other) {
-        return {
-            time: time,
-            position: position,
-            entity: typeof other == typeof Entity ? other : null,
-            location: typeof other == typeof Location ? other : null,
-        };
+    class Unit {
+        time;
+        position;
+        constructor(time, position) {
+            this.time = time;
+            this.position = position;
+        }
     }
-    Memory.Position = Position;
+    Memory.Unit = Unit;
+    class Properties {
+        Color;
+        Shape;
+        Material;
+        Weight;
+        Height;
+        Length;
+        Width;
+        Depth;
+        Mass;
+        Brightness;
+        Transparency;
+        Hardness;
+        Roughness;
+        Entity;
+        get Volume() {
+            return this.Height * this.Length * this.Width;
+        }
+        get Density() {
+            return this.Mass / this.Volume;
+        }
+        constructor(properties) {
+            Object.assign(this, properties);
+        }
+    }
+    Memory.Properties = Properties;
+    class Form extends Unit {
+        properties;
+        constructor({ time, position }, properties) {
+            super(time, position);
+            this.properties = properties;
+        }
+    }
+    Memory.Form = Form;
+    class Site extends Unit {
+        location;
+        constructor({ time, position }, location) {
+            super(time, position);
+            this.location = location;
+        }
+    }
+    Memory.Site = Site;
     class Item {
         name;
         base;
         link;
         result;
-        constructor(name, base, link, result) {
+        history = [];
+        constructor(name, base = null, link = null, result = null) {
             this.name = name;
             this.base = base;
             this.link = link;
             this.result = result;
         }
+        set(base, link, result) {
+            if (this.base && base)
+                Object.assign(this.base, base);
+            if (this.link && link)
+                Object.assign(this.link, link);
+            if (this.result && result)
+                Object.assign(this.result, result);
+        }
     }
     Memory.Item = Item;
-})(Memory = exports.Memory || (exports.Memory = {}));
+})(Memory || (Memory = {}));

@@ -1,13 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Memory_js_1 = require("./Memory.js");
+import { Memory } from "./Memory.js";
 class Ai {
     memories;
     constructor(memories = []) {
         this.memories = memories;
     }
-    ;
-    createMemory(memory) {
+    createMemory(memory, history = []) {
+        memory.history = history;
         this.memories.push(memory);
     }
     getMemory(memoryName) {
@@ -15,9 +13,20 @@ class Ai {
     }
 }
 const ai = new Ai();
-ai.createMemory(new Memory_js_1.Memory.Item("abd", {
-    who: [Memory_js_1.Memory.Position(Memory_js_1.Memory.Time.Current, "abd")],
-    what: [Memory_js_1.Memory.Position(Memory_js_1.Memory.Time.Current, "person", Memory_js_1.Memory.Entity.Living)],
-    where: [Memory_js_1.Memory.Position(Memory_js_1.Memory.Time.Current, "US", Memory_js_1.Memory.Location.Current)]
-}, null, null));
+ai.createMemory(new Memory.Item("abd", {
+    who: [new Memory.Unit(Memory.Time.Current, "abd")],
+    what: [
+        new Memory.Form(new Memory.Unit(Memory.Time.Current, "person"), new Memory.Properties({ Entity: Memory.Entity.Living })),
+    ],
+    where: [
+        new Memory.Site(new Memory.Unit(Memory.Time.Current, "US"), Memory.Location.Current),
+    ],
+}), [
+//add history here
+]);
 console.log(ai.getMemory("abd"));
+ai.getMemory('abd')?.set({
+    where: [
+        new Memory.Site(new Memory.Unit(Memory.Time.Future, "Canada"), Memory.Location.Current)
+    ]
+});
