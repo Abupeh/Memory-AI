@@ -1,57 +1,10 @@
-export namespace Memory {
-	export enum Time {
-		Current,
-		Future,
-		Past,
-		Never,
-		Always,
-		Often,
-	}
-	export enum Entity {
-		Living,
-		Place,
-		Object,
-	}
-	export enum Location {
-		Current,
-		Above,
-		Below,
-		Behind,
-		Infront,
-		Right,
-		Left,
-	}
-	export class Properties {
-		Color!: string;
-		Shape!: string;
-		Material!: string;
-		Weight!: number;
-		Height!: number;
-		Length!: number;
-		Width!: number;
-		Depth!: number;
-		Mass!: number;
-		Brightness!: number;
-		Transparency!: number;
-		Hardness!: number;
-		Roughness!: number;
-		Entity!: Entity;
-		Location!: Location | string;
-		get Volume(): number {
-			return this.Height * this.Length * this.Width;
-		}
-		get Density(): number {
-			return this.Mass / this.Volume;
-		}
-		constructor(properties: Partial<Properties>) {
-			Object.assign(this, properties);
-		}
-	}
+import { Description } from "./Description.js";
 
+export namespace Memory {
 	export class Factors {
 		constructor(
 			public readonly units: Unit[] = [],
-			public readonly forms: Form[] = [],
+			public readonly forms: Form[] = []
 		) {}
 		addUnits(...properties: Unit[]) {
 			this.units.push(...properties);
@@ -63,15 +16,19 @@ export namespace Memory {
 
 	export class Unit {
 		constructor(
-			public time: Date | Time | null,
-			public position: string | null
+			public time: Date | Description.Time | null = null,
+			public position: string | null = null,
+			public occurrence: Description.Occurrence | null = null,
+			public gender: Description.Gender = Description.Gender.Unknown
 		) {}
 	}
 
-
 	export class Form extends Unit {
-		constructor({ time, position }: Unit, public properties: Properties) {
-			super(time, position);
+		constructor(
+			{ time, position, occurrence }: Unit,
+			public properties: Description.Properties
+		) {
+			super(time, position, occurrence);
 		}
 	}
 

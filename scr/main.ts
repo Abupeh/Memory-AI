@@ -1,6 +1,6 @@
 import { Memory } from "./Memory.js";
-
-namespace Statement {}
+import { Cache } from "./Cache.js";
+import { Description } from "./Description.js";
 
 class Mind {
 	constructor(public name: string, public memories: Memory.Item[] = []) {}
@@ -20,86 +20,64 @@ class Mind {
 	}
 }
 
-namespace Interactor {
-	export namespace Cache {
-		// export function memory(memory: Memory.Item): string {}
-		export function factor(factor: Memory.Factors): string {
-			const units = factor.units.map(unit) || [];
-			const forms = factor.forms.map(form) || [];
-			return units
-				.map((unit, index) => `${unit} ${forms[index] ?? ""}`)
-				.join(". ");
-		}
-		function unit(unit: Memory.Unit): string {
-			return [
-				unit.position && unit.position,
-				unit.time && `${unit.position ? "f" : "F"}ounded in, ${unit.time},`,
-			].join(" ");
-		}
-		function form(form: Memory.Form): string {
-			return [
-				form.position &&
-					`${form.time == Memory.Time.Current ? "is" : "was"} a ${
-						form.position
-					}`,
-				form.time != Memory.Time.Current && `during ${form.time},`,
-				form.properties && `and was ${properties(form.properties)}`,
-			].join(" ");
-		}
-		function properties(properties: Memory.Properties): string {
-			return Object.entries(properties).map(([property, value]: [string, string]) => value).join(' ')
-		}
-	}
-}
-
 const mind = new Mind("ABD_BOT");
 // const simpleInput = mind.renderInput("abd", "person");
 // console.log(simpleInput);
 const abdMemory = new Memory.Item(
 	"abd",
 	new Memory.Factors(
-		[new Memory.Unit(Memory.Time.Current, "Abd")],
+		[
+			new Memory.Unit(Description.Time.Future, "Abd"),
+			new Memory.Unit(Description.Time.Past, "SUPER Abd"),
+		],
 		[
 			new Memory.Form(
-				new Memory.Unit(Memory.Time.Current, "person"),
-				new Memory.Properties({
-					Entity: Memory.Entity.Living,
+				new Memory.Unit(Description.Time.Past, "superhuman"),
+				new Description.Properties({
+					Color: "white",
+					Mass: 100,
+					Width: 100,
+					Height: 200,
+					Length: 50,
+					Entity: Description.Entity.Living,
+				})
+			),
+			new Memory.Form(
+				new Memory.Unit(Description.Time.Future, "person"),
+				new Description.Properties({
+					Entity: Description.Entity.Living,
 				})
 			),
 		]
 	)
 );
+mind.createMemory(abdMemory);
+console.log(mind.getMemory('abd'));
 
-const simpleOutput = Interactor.Cache.factor(abdMemory.base);
+const simpleOutput = Cache.factor(mind.getMemory('abd')!.base);
 console.log(simpleOutput);
-// mind.createMemory(
-// 	new Memory.Item(
-// 		"abd",
-// 		new Memory.Factors(
-// 			[new Memory.Unit(Memory.Time.Current, "abd")],
-// 			[
-// 				new Memory.Form(
-// 					new Memory.Unit(Memory.Time.Current, "person"),
-// 					new Memory.Properties({ Entity: Memory.Entity.Living })
-// 				),
-// 				new Memory.Form(
-// 					new Memory.Unit(Memory.Time.Current, "US"),
-// 					new Memory.Properties({ Location: Memory.Location.Current })
-// 				),
-// 			]
-// 		)
-// 	),
-// 	[
-// 		//add history here
-// 	]
-// );
 
-// console.log(mind.getMemory("abd"));
-// mind
-// 	.getMemory("abd")
-// 	?.base?.addForms(
-// 		new Memory.Form(
-// 			new Memory.Unit(Memory.Time.Current, "Canada"),
-// 			new Memory.Properties({ Location: Memory.Location.Current })
-// 		)
-// 	);
+mind.createMemory(
+	new Memory.Item(
+		"mom",
+		new Memory.Factors(
+			[new Memory.Unit(Description.Time.Current, "Mom", null, Description.Gender.Female)],
+			[
+				new Memory.Form(
+					new Memory.Unit(Description.Time.Current, "person"),
+					new Description.Properties({ Entity: Description.Entity.Living })
+				),
+				new Memory.Form(
+					new Memory.Unit(Description.Time.Current, "US"),
+					new Description.Properties({ Location: Description.Location.Current })
+				),
+			]
+		)
+	),
+	[
+		//add history here
+	]
+);
+console.log(mind.getMemory('mom'))
+const output2 = Cache.factor(mind.getMemory('mom')!.base);
+console.log(output2);
