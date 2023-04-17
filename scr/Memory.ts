@@ -21,22 +21,6 @@ export namespace Memory {
 		Right,
 		Left,
 	}
-
-	interface Factors {
-		who?: Unit[];
-		what?: Form[];
-		where?: Site[];
-		why?: string;
-	}
-
-	export class Unit {
-		constructor(
-			public time: Date | Time | null,
-			public position: string | null
-		) {}
-	}
-
-
 	export class Properties {
 		Color!: string;
 		Shape!: string;
@@ -52,6 +36,7 @@ export namespace Memory {
 		Hardness!: number;
 		Roughness!: number;
 		Entity!: Entity;
+		Location!: Location | string;
 		get Volume(): number {
 			return this.Height * this.Length * this.Width;
 		}
@@ -63,17 +48,29 @@ export namespace Memory {
 		}
 	}
 
-	export class Form extends Unit {
-		constructor({ time, position }: Unit, public properties: Properties) {
-			super(time, position);
+	export class Factors {
+		constructor(
+			public readonly units: Unit[] = [],
+			public readonly forms: Form[] = [],
+		) {}
+		addUnits(...properties: Unit[]) {
+			this.units.push(...properties);
+		}
+		addForms(...properties: Form[]) {
+			this.forms.push(...properties);
 		}
 	}
 
-	export class Site extends Unit {
+	export class Unit {
 		constructor(
-			{ time, position }: Unit,
-			public location: Location | string
-		) {
+			public time: Date | Time | null,
+			public position: string | null
+		) {}
+	}
+
+
+	export class Form extends Unit {
+		constructor({ time, position }: Unit, public properties: Properties) {
 			super(time, position);
 		}
 	}
@@ -82,15 +79,14 @@ export namespace Memory {
 		history: Item[] = [];
 		constructor(
 			public name: string,
-			public base: Factors | null = null,
-			public link: Factors | null = null,
-			public result: Factors | null = null
+			public base: Factors = new Factors(),
+			public link: Factors = new Factors(),
+			public result: Factors = new Factors()
 		) {}
 		set(base?: Factors, link?: Factors, result?: Factors) {
-			if(this.base && base) Object.assign(this.base, base);
-			if(this.link && link) Object.assign(this.link, link);
-			if(this.result && result) Object.assign(this.result, result);
-
+			if (this.base && base) Object.assign(this.base, base);
+			if (this.link && link) Object.assign(this.link, link);
+			if (this.result && result) Object.assign(this.result, result);
 		}
 	}
 }

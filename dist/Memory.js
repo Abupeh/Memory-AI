@@ -25,15 +25,6 @@ export var Memory;
         Location[Location["Right"] = 5] = "Right";
         Location[Location["Left"] = 6] = "Left";
     })(Location = Memory.Location || (Memory.Location = {}));
-    class Unit {
-        time;
-        position;
-        constructor(time, position) {
-            this.time = time;
-            this.position = position;
-        }
-    }
-    Memory.Unit = Unit;
     class Properties {
         Color;
         Shape;
@@ -49,6 +40,7 @@ export var Memory;
         Hardness;
         Roughness;
         Entity;
+        Location;
         get Volume() {
             return this.Height * this.Length * this.Width;
         }
@@ -60,6 +52,30 @@ export var Memory;
         }
     }
     Memory.Properties = Properties;
+    class Factors {
+        units;
+        forms;
+        constructor(units = [], forms = []) {
+            this.units = units;
+            this.forms = forms;
+        }
+        addUnits(...properties) {
+            this.units.push(...properties);
+        }
+        addForms(...properties) {
+            this.forms.push(...properties);
+        }
+    }
+    Memory.Factors = Factors;
+    class Unit {
+        time;
+        position;
+        constructor(time, position) {
+            this.time = time;
+            this.position = position;
+        }
+    }
+    Memory.Unit = Unit;
     class Form extends Unit {
         properties;
         constructor({ time, position }, properties) {
@@ -68,21 +84,13 @@ export var Memory;
         }
     }
     Memory.Form = Form;
-    class Site extends Unit {
-        location;
-        constructor({ time, position }, location) {
-            super(time, position);
-            this.location = location;
-        }
-    }
-    Memory.Site = Site;
     class Item {
         name;
         base;
         link;
         result;
         history = [];
-        constructor(name, base = null, link = null, result = null) {
+        constructor(name, base = new Factors(), link = new Factors(), result = new Factors()) {
             this.name = name;
             this.base = base;
             this.link = link;
